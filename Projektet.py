@@ -135,25 +135,35 @@ class Fysik():
         elif (1 == find_valgt and 2 in har_valgt and 5 in har_valgt
               and 4 in har_valgt):
             beregn_knap = Button(self.entry_top, text = "Beregn",
-                                 command = self.straekning_hastighed_beregn)
+                                 command = self.straekning_hastighed_start_beregn)
             beregn_knap.grid(row = len(har_valgt) + 1)
         elif (2 == find_valgt and 1 in har_valgt and 5 in har_valgt
               and 4 in har_valgt):
             beregn_knap = Button(self.entry_top, text = "Beregn",
-                                 command = self.tid_straekning_hastighed_beregn)
+                                 command = self.tid_straekning_hastighed_start_beregn)
             beregn_knap.grid(row = len(har_valgt) + 1)           
         elif (5 == find_valgt and 2 in har_valgt and 1 in har_valgt
               and 4 in har_valgt):
-            print "Good job"
+            beregn_knap = Button(self.entry_top, text = "Beregn",
+                                 command = self.hastighed_straekning_start_beregn)
+            beregn_knap.grid(row = len(har_valgt) + 1) 
         elif (4 == find_valgt and 2 in har_valgt and 5 in har_valgt
               and 1 in har_valgt):
-            print "Good job"
+            beregn_knap = Button(self.entry_top, text = "Beregn",
+                                 command = self.startstraekning_hastighed_beregn)
+            beregn_knap.grid(row = len(har_valgt) + 1)
         elif (1 == find_valgt and 2 in har_valgt and 5 in har_valgt):
-            print "Good job"
+            beregn_knap = Button(self.entry_top, text = "Beregn",
+                                 command = self.straekning_hastighed_beregn)
+            beregn_knap.grid(row = len(har_valgt) + 1)
         elif (2 == find_valgt and 1 in har_valgt and 5 in har_valgt):
-            print "Good job"
+            beregn_knap = Button(self.entry_top, text = "Beregn",
+                                 command = self.tid_straekning_hastighed_beregn)
+            beregn_knap.grid(row = len(har_valgt) + 1) 
         elif (5 == find_valgt and 2 in har_valgt and 1 in har_valgt):
-            print "Good job"
+            beregn_knap = Button(self.entry_top, text = "Beregn",
+                                 command = self.hastighed_straekning_beregn)
+            beregn_knap.grid(row = len(har_valgt) + 1) 
         else:
             error_message.set("Ikke muligt at beregne")
             self.entry_top.destroy()
@@ -208,25 +218,58 @@ class Fysik():
         result = Label(self.entry_top, textvariable = result_text)
         result.grid(row = row_variable, column = 1)
             
-    
-    def straekning_hastighed_beregn(self):
+    #Beregner resultat ud fra input med formel s = v * t + s0
+    def straekning_hastighed_start_beregn(self):
         hast = float(v_entry.get())
         tid = float(t_entry.get())
         str_st = float(s0_entry.get())
         tal_result = hast * tid + str_st
-        result_text.set(str(tal_result))
+        result_text.set(str(tal_result) + " m")
 
-    def tid_straekning_hastighed_beregn(self):
+    #Beregner resultat ud fra input med formel t = (s - s0) / v
+    def tid_straekning_hastighed_start_beregn(self):
         hast = float(v_entry.get())
         str_st = float(s0_entry.get())
         stra = float(s_entry.get())
         tal_result = (stra - str_st) / hast
-    
-        
-        
-        
+        result_text.set(str(tal_result) + " s")
 
-    
+    #Beregner resultat ud fra input med formel v = (s - s0) / v
+    def hastighed_straekning_start_beregn(self):
+        tid = float(t_entry.get())
+        str_st = float(s0_entry.get())
+        stra = float(s_entry.get())
+        tal_result = (stra - str_st) / tid
+        result_text.set(str(tal_result) + " m/s")
+
+    #Beregner resultat ud fra input med formel s0 = s - v * t
+    def startstraekning_hastighed_beregn(self):
+        hast = float(v_entry.get())
+        tid = float(t_entry.get())
+        stra = float(s_entry.get())
+        tal_result = stra - hast * tid
+        result_text.set(str(tal_result) + " m")
+
+    #Beregner resultat ud fra input med formel s = v * t
+    def straekning_hastighed_beregn(self):
+        hast = float(v_entry.get())
+        tid = float(t_entry.get())
+        tal_result = hast * tid
+        result_text.set(str(tal_result) + " m")
+
+    #Beregner resultat ud fra input med formel t = s / v
+    def tid_straekning_hastighed_beregn(self):
+        hast = float(v_entry.get())
+        stra = float(s_entry.get())
+        tal_result = (stra) / hast
+        result_text.set(str(tal_result) + " s")
+
+    #Beregner resultat ud fra input med formel v = s / t
+    def hastighed_straekning_beregn(self):
+        tid = float(t_entry.get())
+        stra = float(s_entry.get())
+        tal_result = (stra) / tid
+        result_text.set(str(tal_result) + " m/s")
 
 root = Tk()
 app = MainApp(root)
