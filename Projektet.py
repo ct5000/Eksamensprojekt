@@ -1,5 +1,6 @@
 # -*- coding: cp1252 -*-
 from Tkinter import *
+import math
 
 class MainApp():
     def __init__(self, parent):
@@ -87,13 +88,19 @@ class Fysik():
         # For at tjekke for formel v^2=v0^2+2*a*(s-s0)
         elif (5 == find_valgt and 0 in har_valgt and 1 in har_valgt and
             3 in har_valgt and 4 in har_valgt):
-            print "Good job"
+            beregn_knap = Button(self.entry_top, text = "Beregn",
+                                 command = self.hastighed_uden_tid_beregn)
+            beregn_knap.grid(row = len(har_valgt) + 1)
         elif (0 == find_valgt and 5 in har_valgt and 1 in har_valgt and
             3 in har_valgt and 4 in har_valgt):
-            print "Good job"
+            beregn_knap = Button(self.entry_top, text = "Beregn",
+                                 command = self.starthastighed_uden_tid_beregn)
+            beregn_knap.grid(row = len(har_valgt) + 1)
         elif (1 == find_valgt and 0 in har_valgt and 5 in har_valgt and
             3 in har_valgt and 4 in har_valgt):
-            print "Good job"
+            beregn_knap = Button(self.entry_top, text = "Beregn",
+                                 command = self.straekning_uden_tid_beregn)
+            beregn_knap.grid(row = len(har_valgt) + 1)
         elif (3 == find_valgt and 0 in har_valgt and 1 in har_valgt and
             5 in har_valgt and 4 in har_valgt):
             print "Good job"
@@ -112,7 +119,7 @@ class Fysik():
         elif (3 == find_valgt and 0 in har_valgt and 1 in har_valgt and
             5 in har_valgt):
             print "Good job"
-        #For at tjekke for formal v = a * t + v0
+        #For at tjekke for formal v = a * t + v0 i forskellige variationer
         elif (5 == find_valgt and 0 in har_valgt and 2 in har_valgt and
               3 in har_valgt):
             beregn_knap = Button(self.entry_top, text = "Beregn",
@@ -236,24 +243,24 @@ class Fysik():
     def straekning_hastighed_start_beregn(self):
         hast = float(v_entry.get())
         tid = float(t_entry.get())
-        str_st = float(s0_entry.get())
-        tal_result = hast * tid + str_st
+        str_nul = float(s0_entry.get())
+        tal_result = hast * tid + str_nul
         result_text.set(str(tal_result) + " m")
 
     #Beregner resultat ud fra input med formel t = (s - s0) / v
     def tid_straekning_hastighed_start_beregn(self):
         hast = float(v_entry.get())
-        str_st = float(s0_entry.get())
+        str_nul = float(s0_entry.get())
         stra = float(s_entry.get())
-        tal_result = (stra - str_st) / hast
+        tal_result = (stra - str_nul) / hast
         result_text.set(str(tal_result) + " s")
 
     #Beregner resultat ud fra input med formel v = (s - s0) / v
     def hastighed_straekning_start_beregn(self):
         tid = float(t_entry.get())
-        str_st = float(s0_entry.get())
+        str_nuk = float(s0_entry.get())
         stra = float(s_entry.get())
-        tal_result = (stra - str_st) / tid
+        tal_result = (stra - str_nul) / tid
         result_text.set(str(tal_result) + " m/s")
 
     #Beregner resultat ud fra input med formel s0 = s - v * t
@@ -289,8 +296,8 @@ class Fysik():
     def hastighed_acceleration_start_beregn(self):
         tid = float(t_entry.get())
         acc = float(a_entry.get())
-        str_hast = float(v0_entry.get())
-        tal_result = acc * tid + str_hast
+        hast_nul = float(v0_entry.get())
+        tal_result = acc * tid + hast_nul
         result_text.set(str(tal_result) + " m/s")
 
     #Beregner resultat ud fra input med formel v0 = v - a * t
@@ -305,16 +312,16 @@ class Fysik():
     def tid_hastighed_acceleration_start_beregn(self):
         hast = float(v_entry.get())
         acc = float(a_entry.get())
-        str_hast = float(v0_entry.get())
-        tal_result = (hast - str_hast) / acc
+        hast_nul = float(v0_entry.get())
+        tal_result = (hast - hast_nul) / acc
         result_text.set(str(tal_result) + " s")
 
     #Beregner resultat ud fra input med formel a = (v - v0) / t
     def acceleration_hastighed_start_beregn(self):
         hast = float(v_entry.get())
         tid = float(t_entry.get())
-        str_hast = float(v0_entry.get())
-        tal_result = (hast - str_hast) / tid
+        hast_nul = float(v0_entry.get())
+        tal_result = (hast - hast_nul) / tid
         result_text.set(str(tal_result) + " m/s^2")
         
      #Beregner resultat ud fra input med formel v = a * t
@@ -337,6 +344,33 @@ class Fysik():
         tid = float(t_entry.get())
         tal_result = hast / tid
         result_text.set(str(tal_result) + " m/s^2")
+
+    #Beregner resultat ud fra input med formel v = sqrt(v0^2 + 2 * a * (s - s0)
+    def hastighed_uden_tid_beregn(self):
+        hast_nul = float(v0_entry.get())
+        acc = float(a_entry.get())
+        stra = float(s_entry.get())
+        stra_nul = float(s0_entry.get())
+        tal_result = math.sqrt(hast_nul**2 + 2 * acc * (s - s0))
+        result_text.set(str(tal_result) + " m/s")
+
+    #Beregner resultat ud fra input med formel v0 = sqrt(v^2 - 2 * a * (s - s0)
+    def starthastighed_uden_tid_beregn(self):
+        hast = float(v_entry.get())
+        acc = float(a_entry.get())
+        stra = float(s_entry.get())
+        stra_nul = float(s0_entry.get())
+        tal_result = math.sqrt(hast**2 - 2 * acc * (s - s0))
+        result_text.set(str(tal_result) + " m/s")
+
+    #Beregner resultat ud fra input med formel s = ((v^2 - v0^2) / (2 * a)) + s0
+    def strakning_uden_tid_beregn(self):
+        hast = float(v_entry.get())
+        acc = float(a_entry.get())
+        hast_nul = float(v0_entry.get())
+        stra_nul = float(s0_entry.get())
+        tal_result = ((hast**2 - hast_nul**2) / 2 * acc) + stra_nul
+        result_text.set(str(tal_result) + " s")
         
 
 root = Tk()
