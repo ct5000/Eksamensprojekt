@@ -13,6 +13,22 @@ class MainApp():
 
     def fysik(self):
         fys = Fysik(self.frame)
+
+    def andengrad_loeser(self, a, b, c):
+        d = determinant(self, a, b, c)
+        if d < 0:
+            return False
+        elif d == 0:
+            results = [(-b) / (2 * a)]
+            return results
+        else:
+            results = []
+            results.append((-b + math.sqrt(d)) / (2 * a))
+            results.append((-b - math.sqrt(d)) / (2 * a))
+            return results
+
+    def determinant(self, a, b, c):
+        return b**2 - 4 * a * c
         
 
 class Fysik():
