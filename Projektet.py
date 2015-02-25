@@ -1,4 +1,19 @@
 # -*- coding: cp1252 -*-
+'''
+Dette program er designet til at kunne beregne forskellige udregninger,
+dog er det indtil videre kun muligt at beregne bevægelse i 1 dimension.
+Der er ikke ret mange loops i koden, men dette skyldes, at der er blevet
+anvendt event-driven programming, hvor en knap kan kalde en funktion flere
+gange, så det er ikke på samme måde nødvendigt at bruge loops til at få
+funktionaliteten til at kunne gentages med flere forskellige input.
+Forløbet i programmet er, at man trykker på en knap, hvor man vælger, hvad
+man vil beregne. Herefter kommer man indtil det emne, som man har valgt, og her
+kan man vælge blandt forskellige regnemuligheder inden for dette emne. Så kommer
+man indtil det man har valgt, og her kan man vælge, hvad man allerede ved og
+hvad man vil finde. Så, hvis det er muligt at beregne, kommer man til et nyt
+vindue, hvor man skal indtaste det information man har. Det beregnes så, men
+først så tjekkes der om det er et ordentligt input, der er blevet givet.
+'''
 from Tkinter import *
 import math, re
 
@@ -11,15 +26,21 @@ class MainApp():
         self.frame.pack()
         intro_label = Label(self.frame, text = "Hvilket emne vil du have?")
         intro_label.grid(row = 0) 
-        
         self.button_fysik = Button(self.frame,text = "Fysik",
                                    command = self.fysik, width = 20, height = 2)
         self.button_fysik.grid(row = 1)
+        self.button_matematik = Button(self.frame, text = "Matematik",
+                                       command = self.matematik, width = 20,
+                                       height = 2)
+        self.button_matematik.grid(row = 2)
 
     #Opretter et nyt vindue via Fysik klassen
     def fysik(self):
         fys = Fysik(self.frame)
 
+    def matematik(self):
+        mat = Matematik(self.frame)
+    
     #Beregner løsning på en andengradsligning på form a x^2 + b x + c = 0
     #Param a: float
     #Param b: float
@@ -47,9 +68,75 @@ class MainApp():
     #Validerer input om det er en float
     #Param value: string
     def float_vali(self, value):
-        matchObj = re.match( r'[a-z]*[A-Z]*', value, re.M|re.I)
-        return not matchObj
+        matchObj = re.findall(r'^-?[0-9]+\.?[0-9]?$', value)
+        return matchObj
             
+
+class Matematik():
+    def __init__(self, parent):
+        self.top = Toplevel(parent)
+        msg = Message(self.top, text = "Hvad vil de beregne inden for matematik?")
+        msg.grid(row = 0)
+        button_parabel = Button(self.top, text = "Parabel", command =
+                                self.parabel_vindue, width = 20, height = 2)
+        button_parabel.grid(row = 1)
+
+    def parabel_vindue(self):
+        global ap_entry, b_entry, c_entry, top_result, rod_result
+        self.top_beregn = Toplevel(self.top)
+        msg_parabel = Message(self.top_beregn, text = "Indtast værdier, når din\
+                                funktion er på formen ax^2+bx+c=0", width = 250)
+        msg_parabel.grid(row = 0, column= 0, columnspan = 2)
+        a_besked = Label(self.top_beregn, text = "a", width = 20)
+        ap_entry = Entry(self.top_beregn)
+        a_besked.grid(row = 1)
+        ap_entry.grid(row = 1, column = 1)
+        b_besked = Label(self.top_beregn, text = "b", width = 20)
+        b_entry = Entry(self.top_beregn)
+        b_besked.grid(row = 2)
+        b_entry.grid(row = 2, column = 1)
+        c_besked = Label(self.top_beregn, text = "c", width = 20)
+        c_entry = Entry(self.top_beregn)
+        c_besked.grid(row = 3)
+        c_entry.grid(row = 3, column = 1)
+        button_beregn_para = Button(self.top_beregn, text = "Beregn", command =
+                                    self.parabel_beregner)
+        button_beregn_para.grid(row = 4, column = 1)
+        rod_text = Label(self.top_beregn, text = "Rødder")
+        top_text = Label(self.top_beregn, text = "Toppunkt")
+        rod_result = StringVar()
+        top_result = StringVar()
+        roedder = Label(self.top_beregn, textvariable = rod_result)
+        toppunkt = Label(self.top_beregn, textvariable = top_result)
+        rod_text.grid(row = 5)
+        roedder.grid(row = 5, column = 1)
+        top_text.grid(row = 6)
+        toppunkt.grid(row = 6, column = 1)
+          
+    def parabel_beregner(self):
+        if (app.float_vali(ap_entry.get()) and app.float_vali(b_entry.get()) and
+            app.float_vali(c_entry.get())):
+            a = float(ap_entry.get())
+            b = float(b_entry.get())
+            c = float(c_entry.get())
+            rod = app.andengrad_loeser(a, b, c)
+            if len(rod) > 0:
+                if len(rod) == 1:
+                    rod_result.set("x = " + str(rod[0]))
+                else:
+                    rod_result.set("x = " + str(rod[0]) + "og x = " + str(rod[1]))
+            else:
+                rod_result.set("Ingen rødder")
+            toppunkt = self.toppunkt_beregn(a, b, c)
+            top_result.set(str(toppunkt))
+
+            
+        else:
+            top_result.set("Dårligt input")
+
+    def toppunkt_beregn(self, a, b, c):
+        determinant = app.determinant(a, b, c)
+        return ((-b) / (2 * a), ((-determinant) / (4 * a)))
         
 #Klasse med beregner, der indeholder fysik
 class Fysik():
@@ -59,7 +146,6 @@ class Fysik():
         self.top = Toplevel(parent)
         msg = Message(self.top, text = "Hvad vil du beregne inden for fysik?")
         msg.grid(row = 0)
-
         button_kinematik = Button(self.top, text = "Bevægelse i 1D",
                                   command = self.movement_1d, width = 20,
                                   height = 2)
@@ -264,8 +350,7 @@ class Fysik():
             error_message.set("Ikke muligt at beregne")
             self.entry_top.destroy()
             return
-            
-            
+        
         self.top_entry_op(0 in har_valgt, 1 in har_valgt, 2 in har_valgt,
                           3 in har_valgt, 4 in har_valgt, 5 in har_valgt)
 
