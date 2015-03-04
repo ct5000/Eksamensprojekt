@@ -15,14 +15,14 @@ vindue, hvor man skal indtaste det information man har. Det beregnes så, men
 først så tjekkes der om det er et ordentligt input, der er blevet givet.
 '''
 from Tkinter import *
-import math, re
+import math, re, operator
 
 #Opretter 
 class MainApp():
     #Initialisere MainApp klassen, hvor den starter med at oprette en frame
     #her efter opretter den en knap, der kalder funktionen fysik
     def __init__(self, parent):
-        self.frame = Frame(parent)
+        self.frame = Frame(parent, padx = 6, pady = 6)
         self.frame.pack()
         intro_label = Label(self.frame, text = "Hvilket emne vil du have?")
         intro_label.grid(row = 0) 
@@ -33,7 +33,12 @@ class MainApp():
                                        command = self.matematik, width = 20,
                                        height = 2)
         self.button_matematik.grid(row = 2)
-        menubar = Menu(root)
+        self.button_skrivning = Button(self.frame, text = "Skrivning",
+                                       command = self.skrivning, width = 20,
+                                       height = 2)
+        self.button_skrivning.grid(row = 3)
+        
+        menubar = Menu(self.frame)
         menubar.add_command(label = "Quit", command = parent.destroy)
         parent.config(menu = menubar)
 
@@ -43,6 +48,9 @@ class MainApp():
 
     def matematik(self):
         mat = Matematik(self.frame)
+
+    def skrivning(self):
+        skriv = Skrivning(self.frame)
     
     #Beregner løsning på en andengradsligning på form a x^2 + b x + c = 0
     #Param a: float
@@ -73,8 +81,66 @@ class MainApp():
     def float_vali(self, value):
         matchObj = re.findall(r'^-?[0-9]+\.?[0-9]?$', value)
         return matchObj
-            
 
+class Skrivning():
+    def __init__(self, parent):
+        self.top = Toplevel(parent)
+        msg = Message(self.top, text = "Hvad vil du vide inden for skrivning")
+        msg.grid(row = 0)
+        button_count = Button(self.top, text = "Mest brugte ord",
+                              command = self.most_used_words, width = 20,
+                              height = 2)
+        button_count.grid(row = 1)
+
+    def most_used_words(self):
+        global sti_entry, most_words
+        word_count = Toplevel(self.top)
+        text_msg = """Indtast stien til den txt fil, du vil have tjekket, på følgende
+form c:/mappe/mappe/fil"""
+        word_count_msg = Message(word_count, text = text_msg, width = 250)
+        word_count_msg.grid(row = 0, column = 0, columnspan = 2)
+        sti_label = Label(word_count, text = "Sti")
+        sti_label.grid(row = 1)
+        sti_entry = Entry(word_count, width = 40)
+        sti_entry.grid(row = 1, column = 1)
+        count_words_button = Button(word_count, text = "Tæl",
+                                    command = self.count_words)
+        count_words_button.grid(row = 2, column = 1)
+        used_words_label = Label(word_count, text = "5 mest brugte ord og antal gange brugt")
+        used_words_label.grid(row = 3)
+        most_words = StringVar()
+        most_words_text = Label(word_count, textvariable = most_words)
+        most_words_text.grid(row = 3, column = 1)
+
+    def count_words(self):
+        global most_words
+        try:
+            stien = sti_entry.get()
+            count_file = open(stien, "r")
+            count_text = count_file.read()
+            count_text = count_text.lower()
+            words = re.split(r'[ ^|^,|^.]+', count_text)
+            wordcount = {}
+            for w in words:
+                if not (w in wordcount.keys()):
+                    wordcount[w] = 1
+                else:
+                    wordcount[w] += 1
+            sorted_wordcount = sorted(wordcount.items(), key = operator.itemgetter(1))
+            sorted_wordcount.reverse()
+            most_words.set(sorted_wordcount[0][0] + ": " +
+                           str(sorted_wordcount[0][1]) + ", " +
+                           sorted_wordcount[1][0] + ": " +
+                           str(sorted_wordcount[1][1]) + ", " +
+                           sorted_wordcount[2][0] + ": " +
+                           str(sorted_wordcount[2][1]) + ", " +
+                           sorted_wordcount[3][0] + ": " +
+                           str(sorted_wordcount[3][1]) + " og " +
+                           sorted_wordcount[4][0] + ": " +
+                           str(sorted_wordcount[4][1]))
+        except:
+            most_words.set("Kan ikke finde stien")
+        
 class Matematik():
     def __init__(self, parent):
         self.top = Toplevel(parent)
@@ -83,6 +149,7 @@ class Matematik():
         button_parabel = Button(self.top, text = "Parabel", command =
                                 self.parabel_vindue, width = 20, height = 2)
         button_parabel.grid(row = 1)
+        matmenu = Menu(self.top)
 
     def parabel_vindue(self):
         global ap_entry, b_entry, c_entry, top_result, rod_result
