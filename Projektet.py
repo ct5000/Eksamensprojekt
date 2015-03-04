@@ -33,6 +33,9 @@ class MainApp():
                                        command = self.matematik, width = 20,
                                        height = 2)
         self.button_matematik.grid(row = 2)
+        menubar = Menu(root)
+        menubar.add_command(label = "Quit", command = parent.destroy)
+        parent.config(menu = menubar)
 
     #Opretter et nyt vindue via Fysik klassen
     def fysik(self):
