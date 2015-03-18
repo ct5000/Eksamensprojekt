@@ -93,27 +93,31 @@ class Skrivning():
         button_count.grid(row = 1)
 
     def most_used_words(self):
-        global sti_entry, most_words
-        word_count = Toplevel(self.top)
+        global sti_entry, most_words, word_graph
+        self.word_count = Toplevel(self.top)
         text_msg = """Indtast stien til den txt fil, du vil have tjekket, på følgende
 form c:/mappe/mappe/fil"""
-        word_count_msg = Message(word_count, text = text_msg, width = 250)
+        word_count_msg = Message(self.word_count, text = text_msg, width = 250)
         word_count_msg.grid(row = 0, column = 0, columnspan = 2)
-        sti_label = Label(word_count, text = "Sti")
+        sti_label = Label(self.word_count, text = "Sti")
         sti_label.grid(row = 1)
-        sti_entry = Entry(word_count, width = 40)
+        sti_entry = Entry(self.word_count, width = 40)
         sti_entry.grid(row = 1, column = 1)
-        count_words_button = Button(word_count, text = "Tæl",
+        count_words_button = Button(self.word_count, text = "Tæl",
                                     command = self.count_words)
         count_words_button.grid(row = 2, column = 1)
-        used_words_label = Label(word_count, text = "5 mest brugte ord og antal gange brugt")
+        used_words_label = Label(self.word_count, text = "5 mest brugte ord og antal gange brugt")
         used_words_label.grid(row = 3)
         most_words = StringVar()
-        most_words_text = Label(word_count, textvariable = most_words)
+        most_words_text = Label(self.word_count, textvariable = most_words)
         most_words_text.grid(row = 3, column = 1)
+        word_graph = Canvas(self.word_count, width = 600, height = 400, bg="gray")
+        word_graph.grid(row = 4, columnspan = 2)
+        word_graph.create_line((35, 25), (35, 375), fill = "black")
+        word_graph.create_line((35,375), (585, 375), fill = "black")
 
     def count_words(self):
-        global most_words
+        global most_words, word_graph
         try:
             stien = sti_entry.get()
             count_file = open(stien, "r")
@@ -137,10 +141,34 @@ form c:/mappe/mappe/fil"""
                            sorted_wordcount[3][0] + ": " +
                            str(sorted_wordcount[3][1]) + " og " +
                            sorted_wordcount[4][0] + ": " +
-                           str(sorted_wordcount[4][1]))
+                           str(sorted_wordcount[4][1])) 
+            y_axistal = sorted_wordcount[0][1] / 4.0
+            pillar_num = 275.0 / sorted_wordcount[0][1]
+            word_graph.create_text((18, 325), text = str(y_axistal))
+            word_graph.create_text((18, 250), text = str(y_axistal * 2))
+            word_graph.create_text((18, 175), text = str(y_axistal * 3))
+            word_graph.create_text((18, 100), text = str(y_axistal * 4))
+            word_graph.create_text((60, 388), text = sorted_wordcount[0][0])
+            word_graph.create_text((110, 388), text = sorted_wordcount[1][0])
+            word_graph.create_text((160, 388), text = sorted_wordcount[2][0])
+            word_graph.create_text((210, 388), text = sorted_wordcount[3][0])
+            word_graph.create_text((260, 388), text = sorted_wordcount[4][0])
+            word_graph.create_text((310, 388), text = sorted_wordcount[5][0])
+            word_graph.create_text((360, 388), text = sorted_wordcount[6][0])
+            word_graph.create_text((410, 388), text = sorted_wordcount[7][0])
+            word_graph.create_text((460, 388), text = sorted_wordcount[8][0])
+            word_graph.create_text((510, 388), text = sorted_wordcount[9][0])
+            word_graph.create_text((560, 388), text = sorted_wordcount[10][0])
+            for i in range(11):
+                word_graph.create_rectangle((55 + i * 50, 375),
+                                            (65 + i * 50, 375 -
+                                             sorted_wordcount[i][1]* pillar_num),
+                                            fill = "red")
+            count_file.close()
+            
         except:
-            most_words.set("Kan ikke finde stien")
-        
+            most_words.set("Kan ikke finde stien")            
+       
 class Matematik():
     def __init__(self, parent):
         self.top = Toplevel(parent)
@@ -220,6 +248,238 @@ class Fysik():
                                   command = self.movement_1d, width = 20,
                                   height = 2)
         button_kinematik.grid(row = 1)
+        button_energi = Button(self.top, text = "Energi", command = self.energi,
+                               width = 20, height = 2)
+        button_energi.grid(row = 2)
+
+    def energi(self):
+        global error_message_energi, find_list_energi, har_list_energi
+        self.top_energi = Toplevel(self.top)
+        msg_findenergi = Message(self.top_energi, text = "Vælg hvad du vil finde")
+        msg_harenergi = Message(self.top_energi, text = "Vælg hvad du har")
+        msg_findenergi.grid(row = 0)
+        msg_harenergi.grid(row = 0, column = 1)
+        muligheder_energi = ["Energi, E [J]", "Varmeenergi, Q [J]", "Arbejde, A [J]",
+                             "Masse, m [kg]", "Specifik varmekapacitet, c [J/(kg * K)]",
+                             "Temperaturstigning, deltaT [K]", "Hastighed, v [m/s]",
+                             "Højde, h [m]", "Energi kinetisk, Ekin [J]",
+                             "Energi potetiel, Epot [J]", "Energi mekanisk, Emek [J]",
+                             "Kraft, F [N]", "Fjedrekonstant, k [N/m]", 
+                             "Fjedre forlængelse, x [m]", "Strømstyrke, I [A]",
+                             "Spændingsfald, U [V]", "Modstand, R [Ohm]",
+                             "Effekt, P [W]", "Tid, t [s]", "Vinkel, alpha [Grader]"]
+        find_list_energi = Listbox(self.top_energi, exportselection = 0,
+                                   height = 20, width = 35)
+        har_list_energi = Listbox(self.top_energi, selectmode = MULTIPLE,
+                                  exportselection = 0, height = 20, width = 35)
+        find_list_energi.grid(row = 1)
+        har_list_energi.grid(row = 1, column = 1)
+        for item in muligheder_energi:
+            find_list_energi.insert(END, item)
+            har_list_energi.insert(END, item)
+        beregn_energi_button = Button(self.top_energi, text = "Beregn",
+                                      command = self.energi_beregningen)
+        beregn_energi_button.grid(row = 2, column = 1, sticky = E)
+        error_message_energi = StringVar()
+        error_energi_label = Label(self.top_energi,
+                                   textvariable = error_message_energi)
+        error_energi_label.grid(row = 3)
+
+    def energi_beregningen(self):
+        find_valgt = map(int, find_list_energi.curselection())[0]
+        har_valgt = map(int, har_list_energi.curselection())
+        self.entry_top_energi = Toplevel(self.top_energi)
+
+        if (0 == find_valgt and 1 in har_valgt and 2 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.energi_arbejde_varme)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        elif (1 == find_valgt and 2 in har_valgt and 0 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.varme_energi_arbejde)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        elif (2 == find_valgt and 0 in har_valgt and 1 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.arbejde_energi_varme)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        else:
+            error_message_energi.set("Ikke muligt at beregne")
+            self.entry_top_energi.destroy()
+            return
+        entry_top_message = Label(self.entry_top_energi,
+                                  text = "Indtast tal som decimaltal")
+        entry_top_message.grid(row = 0)
+        self.energi_entry_op(0 in har_valgt, 1 in har_valgt, 2 in har_valgt,
+                             3 in har_valgt, 4 in har_valgt, 5 in har_valgt,
+                             6 in har_valgt, 7 in har_valgt, 8 in har_valgt,
+                             9 in har_valgt, 10 in har_valgt, 11 in har_valgt,
+                             12 in har_valgt, 13 in har_valgt, 14 in har_valgt,
+                             15 in har_valgt, 16 in har_valgt, 17 in har_valgt,
+                             18 in har_valgt, 19 in har_valgt)
+        
+        
+
+    def energi_entry_op(self, E, Q, A, m, c, deltaT, v, h, Ekin, Epot, Emek, F, k,
+                        x, I, U, R, P, t, alpha):
+        global E_entry, Q_entry, A_entry, energi_result_text
+        row_variable = 1
+        if E:
+            E_besked = Label(self.entry_top_energi, text = "Energi: E")
+            E_entry = Entry(self.entry_top_energi)
+            E_entry.grid(row = row_variable, column = 1)
+            E_besked.grid(row = row_variable, column = 0)
+            row_variable += 1
+        if Q:
+            Q_besked = Label(self.entry_top_energi, text = "Varmeenergi: Q")
+            Q_entry = Entry(self.entry_top_energi)
+            Q_entry.grid(row = row_variable, column = 1)
+            Q_besked.grid(row = row_variable, column = 0)
+            row_variable += 1
+        if A:
+            A_besked = Label(self.entry_top_energi, text = "Arbejde: A")
+            A_entry = Entry(self.entry_top_energi)
+            A_entry.grid(row = row_variable, column = 1)
+            A_besked.grid(row = row_variable, column = 0)
+            row_variable += 1
+        if m:
+            m_besked = Label(self.entry_top_energi, text = "Masse: m")
+            m_entry = Entry(self.entry_top_energi)
+            m_entry.grid(row = row_variable, column = 1)
+            m_besked.grid(row = row_variable, column = 0)
+            row_variable += 1
+        if c:
+            c_besked = Label(self.entry_top_energi, text = "Specifikvarmekapacitet: c")
+            c_entry = Entry(self.entry_top_energi)
+            c_entry.grid(row = row_variable, column = 1)
+            c_besked.grid(row = row_variable, column = 0)
+            row_variable += 1
+        if deltaT:
+            deltaT_besked = Label(self.entry_top_energi, text = "Temperatur ændring: deltaT")
+            deltaT_entry = Entry(self.entry_top_energi)
+            deltaT_entry.grid(row = row_variable, column = 1)
+            deltaT_besked.grid(row = row_variable, column = 0)
+            row_variable += 1
+        if v:
+            v_besked = Label(self.entry_top_energi, text = "Hastighed: v")
+            v_entry = Entry(self.entry_top_energi)
+            v_entry.grid(row = row_variable, column = 1)
+            v_besked.grid(row = row_variable, column = 0)
+            row_variable += 1
+        if h:
+            h_besked = Label(self.entry_top_energi, text = "Højde: h")
+            h_entry = Entry(self.entry_top_energi)
+            h_entry.grid(row = row_variable, column = 1)
+            h_besked.grid(row = row_variable, column = 0)
+            row_variable += 1
+        if Ekin:
+            Ekin_besked = Label(self.entry_top_energi, text = "Kinetisk energi: Ekin")
+            Ekin_entry = Entry(self.entry_top_energi)
+            Ekin_entry.grid(row = row_variable, column = 1)
+            Ekin_besked.grid(row = row_variable, column = 0)
+            row_variable += 1
+        if Epot:
+            Epot_besked = Label(self.entry_top_energi, text = "Potentiel energi: Epot")
+            Epot_entry = Entry(self.entry_top_energi)
+            Epot_entry.grid(row = row_variable, column = 1)
+            Epot_besked.grid(row = row_variable, column = 0)
+            row_variable += 1
+        if Emek:
+            Emek_besked = Label(self.entry_top_energi, text = "Mekanisk energi: Emek")
+            Emek_entry = Entry(self.entry_top_energi)
+            Emek_entry.grid(row = row_variable, column = 1)
+            Emek_besked.grid(row = row_variable, column = 0)
+            row_variable += 1
+        if F:
+            F_besked = Label(self.entry_top_energi, text = "Kraft: F")
+            F_entry = Entry(self.entry_top_energi)
+            F_entry.grid(row = row_variable, column = 1)
+            F_besked.grid(row = row_variable, column = 0)
+            row_variable += 1
+        if k:
+            k_besked = Label(self.entry_top_energi, text = "Fjederkonstant: k")
+            k_entry = Entry(self.entry_top_energi)
+            k_entry.grid(row = row_variable, column = 1)
+            k_besked.grid(row = row_variable, column = 0)
+            row_variable += 1
+        if x:
+            x_besked = Label(self.entry_top_energi, text = "Fjedre forlængelse: x")
+            x_entry = Entry(self.entry_top_energi)
+            x_entry.grid(row = row_variable, column = 1)
+            x_besked.grid(row = row_variable, column = 0)
+            row_variable += 1
+        if I:
+            I_besked = Label(self.entry_top_energi, text = "Strømstyrke: I")
+            I_entry = Entry(self.entry_top_energi)
+            I_entry.grid(row = row_variable, column = 1)
+            I_besked.grid(row = row_variable, column = 0)
+            row_variable += 1
+        if U:
+            U_besked = Label(self.entry_top_energi, text = "Spændingsfald: U")
+            U_entry = Entry(self.entry_top_energi)
+            U_entry.grid(row = row_variable, column = 1)
+            U_besked.grid(row = row_variable, column = 0)
+            row_variable += 1
+        if R:
+            R_besked = Label(self.entry_top_energi, text = "Modstand: R")
+            R_entry = Entry(self.entry_top_energi)
+            R_entry.grid(row = row_variable, column = 1)
+            R_besked.grid(row = row_variable, column = 0)
+            row_variable += 1
+        if P:
+            P_besked = Label(self.entry_top_energi, text = "Effekt: P")
+            P_entry = Entry(self.entry_top_energi)
+            P_entry.grid(row = row_variable, column = 1)
+            P_besked.grid(row = row_variable, column = 0)
+            row_variable += 1
+        if t:
+            t_besked = Label(self.entry_top_energi, text = "Tid: t")
+            t_entry = Entry(self.entry_top_energi)
+            t_entry.grid(row = row_variable, column = 1)
+            t_besked.grid(row = row_variable, column = 0)
+            row_variable += 1
+        if alpha:
+            alpha_besked = Label(self.entry_top_energi, text = "Vinkel: alpha")
+            alpha_entry = Entry(self.entry_top_energi)
+            alpha_entry.grid(row = row_variable, column = 1)
+            alpha_besked.grid(row = row_variable, column = 0)
+            row_variable += 1
+        energi_result_text = StringVar()
+        energi_result = Label(self.entry_top_energi,
+                              textvariable = energi_result_text)
+        energi_result.grid(row = row_variable, column = 1)
+
+    #Beregner resultat ud fra formel E = A + Q    
+    def energi_arbejde_varme(self):
+        if (app.float_vali(A_entry.get()) and app.float_vali(Q_entry.get())):
+            Q = float(Q_entry.get())
+            A = float(A_entry.get())
+            result = Q + A
+            energi_result_text.set(str(result) + " J")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel A = E - Q
+    def arbejde_energi_varme(self):
+        if (app.float_vali(E_entry.get()) and app.float_vali(Q_entry.get())):
+            Q = float(Q_entry.get())
+            E = float(E_entry.get())
+            result = E - Q
+            energi_result_text.set(str(result) + " J")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel Q = E - A
+    def varme_energi_arbejde(self):
+        if (app.float_vali(E_entry.get()) and app.float_vali(A_entry.get())):
+            E = float(E_entry.get())
+            A = float(A_entry.get())
+            result = E - A
+            energi_result_text.set(str(result) + " J")
+        else:
+            energi_result_text.set("Dårligt input") 
+            
+
+    
 
     #Opretter to multi choice skemaer, hvor man kan vælge hvad information
     #man har og man ønsker at finde. Opretter så knap, så beregningen
@@ -227,21 +487,21 @@ class Fysik():
     def movement_1d(self):
         global find_list, har_list, error_message
         self.top_beregn = Toplevel(self.top)
-        msg_find = Message(self.top_beregn, text = "Vælg hvad du vil finde?")
+        msg_find = Message(self.top_beregn, text = "Vælg hvad du vil finde")
         msg_find.grid(row = 0)
         find_list = Listbox(self.top_beregn, exportselection = 0)
         find_list.grid(row = 1)
-        muligheder = ["Starhastighed: v0", "Strækning: s", "Tid: t",
-                      "Accelration: a", 'Startrækning: s0', 'Hastighed: v']
-        for item in muligheder:
-            find_list.insert(END, item)
-
         msg_har = Message(self.top_beregn, text = "Hvad information har du?")
         msg_har.grid(row = 0, column = 1)
-        har_list = Listbox(self.top_beregn, selectmode = MULTIPLE, exportselection = 0)
+        har_list = Listbox(self.top_beregn, selectmode = MULTIPLE,
+                           exportselection = 0)
         har_list.grid(row = 1, column = 1)
+        muligheder = ["Starhastighed: v0 [m/s]", "Strækning: s [m]", "Tid: t [s]",
+                      "Accelration: a [m/s^2]", 'Startrækning: s0 [m]',
+                      'Hastighed: v [m/s]']
         for item in muligheder:
-            har_list.insert(END, item)
+            find_list.insert(END, item)
+            har_list.insert(END, item)    
         kin_beregning_knap = Button(self.top_beregn, text = "Test",
                                     command = self.kin_beregning)
         kin_beregning_knap.grid(row = 2)
