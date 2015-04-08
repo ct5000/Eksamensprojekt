@@ -267,11 +267,12 @@ class Fysik():
                              "Kraft, F [N]", "Fjedrekonstant, k [N/m]", 
                              "Fjedre forlængelse, x [m]", "Strømstyrke, I [A]",
                              "Spændingsfald, U [V]", "Modstand, R [Ohm]",
-                             "Effekt, P [W]", "Tid, t [s]", "Vinkel, alpha [Grader]"]
+                             "Effekt, P [W]", "Tid, t [s]", "Vinkel, alpha [Grader]",
+                             "Strækning, s[m]"]
         find_list_energi = Listbox(self.top_energi, exportselection = 0,
-                                   height = 20, width = 35)
+                                   height = 22, width = 35)
         har_list_energi = Listbox(self.top_energi, selectmode = MULTIPLE,
-                                  exportselection = 0, height = 20, width = 35)
+                                  exportselection = 0, height = 22, width = 35)
         find_list_energi.grid(row = 1)
         har_list_energi.grid(row = 1, column = 1)
         for item in muligheder_energi:
@@ -289,7 +290,7 @@ class Fysik():
         find_valgt = map(int, find_list_energi.curselection())[0]
         har_valgt = map(int, har_list_energi.curselection())
         self.entry_top_energi = Toplevel(self.top_energi)
-
+        #Check for beregninger indenfor E = A + Q
         if (0 == find_valgt and 1 in har_valgt and 2 in har_valgt):
             beregn_knap = Button(self.entry_top_energi, text = "Beregn",
                                  command = self.energi_arbejde_varme)
@@ -302,9 +303,111 @@ class Fysik():
             beregn_knap = Button(self.entry_top_energi, text = "Beregn",
                                  command = self.arbejde_energi_varme)
             beregn_knap.grid(row = len(har_valgt) + 1)
+        #Check for beregninger indenfor A = F * s * cos(alpha)
+        elif (2 == find_valgt and 11 in har_valgt and 19 in har_valgt
+              and 20 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.arbejde_kraft_straek_vinkel)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        elif (11 == find_valgt and 2 in har_valgt and 19 in har_valgt
+              and 20 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.kraft_arbejde_straek_vinkel)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        elif (19 == find_valgt and 2 in har_valgt and 11 in har_valgt
+              and 20 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.vinkel_arbejde_straek_kraft)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        elif (20 == find_valgt and 2 in har_valgt and 11 in har_valgt
+              and 19 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.straek_arbejde_vinkel_kraft)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        #Check for beregning indenfor A = -0.5 * k * x^2
+        elif (2 == find_valgt and 12 in har_valgt and 13 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.arbejde_fjederk_presset)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        elif (12 == find_valgt and 2 in har_valgt and 13 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.fjederk_arbejde_presset)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        elif (13 == find_valgt and 2 in har_valgt and 12 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.presset_fjederk_arbejde)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        #Check for beregning indenfor E = P * t
+        elif (0 == find_valgt and 17 in har_valgt and 18 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.energi_effekt_tid)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        elif (17 == find_valgt and 0 in har_valgt and 18 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.effekt_energi_tid)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        elif (18 == find_valgt and 0 in har_valgt and 17 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.tid_effekt_energi)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        #Check for beregning indenfor E = U * I * t
+        elif (0 == find_valgt and 14 in har_valgt and 15 in har_valgt
+              and 18 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.energi_styrke_spaending_tid)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        elif (14 == find_valgt and 0 in har_valgt and 15 in har_valgt
+              and 18 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.styrke_energi_spaending_tid)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        elif (15 == find_valgt and 0 in har_valgt and 14 in har_valgt
+              and 18 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.spaending_energi_styrke_tid)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        elif (18 == find_valgt and 0 in har_valgt and 14 in har_valgt
+              and 15 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.tid_spaending_energi_styrke)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        #Check for beregning indenfor E = R * I^2 * t
+        elif (0 == find_valgt and 14 in har_valgt and 16 in har_valgt
+              and 18 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.energi_modstand_styrke_tid)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        elif (14 == find_valgt and 0 in har_valgt and 16 in har_valgt
+              and 18 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.styrke_modstand_energi_tid)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        elif (16 == find_valgt and 0 in har_valgt and 14 in har_valgt
+              and 18 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.modstand_styrke_energi_tid)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        elif (18 == find_valgt and 0 in har_valgt and 14 in har_valgt
+              and 16 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.tid_modstand_styrke_energi)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        #Check for beregning indenfor Ekin = 0.5 * m * v^2
+        elif (8 == find_valgt and 6 in har_valgt and 3 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.kinenergi_masse_hastighed)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        elif (6 == find_valgt and 8 in har_valgt and 3 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.hastighed_kinenergi_masse)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        elif (3 == find_valgt and 8 in har_valgt and 6 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.masse_hastighed_kinenergi)
+            beregn_knap.grid(row = len(har_valgt) + 1)
         else:
             error_message_energi.set("Ikke muligt at beregne")
-            self.entry_top_energi.destroy()
+            self.entry_top_energi.destroy()      
             return
         entry_top_message = Label(self.entry_top_energi,
                                   text = "Indtast tal som decimaltal")
@@ -315,13 +418,16 @@ class Fysik():
                              9 in har_valgt, 10 in har_valgt, 11 in har_valgt,
                              12 in har_valgt, 13 in har_valgt, 14 in har_valgt,
                              15 in har_valgt, 16 in har_valgt, 17 in har_valgt,
-                             18 in har_valgt, 19 in har_valgt)
+                             18 in har_valgt, 19 in har_valgt, 20 in har_valgt)
         
         
 
     def energi_entry_op(self, E, Q, A, m, c, deltaT, v, h, Ekin, Epot, Emek, F, k,
-                        x, I, U, R, P, t, alpha):
-        global E_entry, Q_entry, A_entry, energi_result_text
+                        x, I, U, R, P, t, alpha, s):
+        global E_entry, Q_entry, A_entry, m_entry, F_entry, energi_result_text
+        global c_entry, deltaT_entry, v_entry, h_entry, Ekin_entry, Epot_entry
+        global Emek_entry, k_entry, x_entry, I_entry, U_entry, R_entry, P_entry
+        global t_entry, alpha_entry, s_entry
         row_variable = 1
         if E:
             E_besked = Label(self.entry_top_energi, text = "Energi: E")
@@ -443,6 +549,12 @@ class Fysik():
             alpha_entry.grid(row = row_variable, column = 1)
             alpha_besked.grid(row = row_variable, column = 0)
             row_variable += 1
+        if s:
+            s_besked = Label(self.entry_top_energi, text = "Strækning: s")
+            s_entry = Entry(self.entry_top_energi)
+            s_entry.grid(row = row_variable, column = 1)
+            s_besked.grid(row = row_variable, column = 0)
+            row_variable += 1
         energi_result_text = StringVar()
         energi_result = Label(self.entry_top_energi,
                               textvariable = energi_result_text)
@@ -476,10 +588,243 @@ class Fysik():
             result = E - A
             energi_result_text.set(str(result) + " J")
         else:
-            energi_result_text.set("Dårligt input") 
-            
+            energi_result_text.set("Dårligt input")
 
-    
+    #Beregner resultat ud fra formel A = F * s * cos(alpha)
+    def arbejde_kraft_straek_vinkel(self):
+        if (app.float_vali(F_entry.get()) and app.float_vali(s_entry.get())
+            and app.float_vali(alpha_entry.get())):
+            F = float(F_entry.get())
+            s = float(s_entry.get())
+            alpha = math.radians(float(alpha_entry.get()))
+            result = F * s * math.cos(alpha)
+            energi_result_text.set(str(result) + " J")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel F = A / (s * cos(alpha))
+    def kraft_arbejde_straek_vinkel(self):
+        if (app.float_vali(A_entry.get()) and app.float_vali(s_entry.get())
+            and app.float_vali(alpha_entry.get())):
+            A = float(A_entry.get())
+            s = float(s_entry.get())
+            alpha = math.radians(float(alpha_entry.get()))
+            result = A / (s * math.cos(alpha))
+            energi_result_text.set(str(result) + " N")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel alpha = acos(A / (F * s))
+    def vinkel_arbejde_straek_kraft(self):
+        try:
+            if (app.float_vali(A_entry.get()) and app.float_vali(s_entry.get())
+                and app.float_vali(F_entry.get())):
+                A = float(A_entry.get())
+                s = float(s_entry.get())
+                F = float(F_entry.get())
+                result = math.degrees(math.acos(A / (s * F)))
+                energi_result_text.set(str(result))
+            else:
+                energi_result_text.set("Dårligt input")
+        except ValueError:
+            energi_result_text.set("Udenfor Dm af acos")
+
+    #Beregner resultat ud fra formel s = A / (F * cos(alpha))
+    def straek_arbejde_vinkel_kraft(self):
+        if (app.float_vali(A_entry.get()) and app.float_vali(F_entry.get())
+            and app.float_vali(alpha_entry.get())):
+            A = float(A_entry.get())
+            F = float(F_entry.get())
+            alpha = math.radians(float(alpha_entry.get()))
+            result = A / (F * math.cos(alpha))
+            energi_result_text.set(str(result) + " m")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel A = -0.5 * k * x^2
+    def arbejde_fjederk_presset(self):
+        if (app.float_vali(k_entry.get()) and app.float_vali(x_entry.get())):
+            k = float(k_entry.get())
+            x = float(x_entry.get())
+            result = 0.5 * k * x**2
+            energi_result_text.set(str(result) + " J")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel k = A / (-0.5 * x^2)
+    def fjederk_arbejde_presset(self):
+        if (app.float_vali(A_entry.get()) and app.float_vali(x_entry.get())):
+            A = float(A_entry.get())
+            x = float(x_entry.get())
+            result = A / (0.5 * x**2)
+            energi_result_text.set(str(result) + " N/m")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel x = sqrt(A / (-0.5 * k))
+    def presset_fjederk_arbejde(self):
+        if (app.float_vali(A_entry.get()) and app.float_vali(k_entry.get())):
+            A = float(A_entry.get())
+            k = float(k_entry.get())
+            result = math.sqrt(A / (0.5 * k))
+            energi_result_text.set(str(result) + " m")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel E = P * t
+    def energi_effekt_tid(self):
+        if (app.float_vali(P_entry.get()) and app.float_vali(t_entry.get())):
+            P = float(P_entry.get())
+            t = float(t_entry.get())
+            result = P * t
+            energi_result_text.set(str(result) + " J")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel P = E / t
+    def effekt_energi_tid(self):
+        if (app.float_vali(E_entry.get()) and app.float_vali(t_entry.get())):
+            E = float(E_entry.get())
+            t = float(t_entry.get())
+            result = E / t
+            energi_result_text.set(str(result) + " W")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel t = E / P
+    def tid_effekt_energi(self):
+        if (app.float_vali(E_entry.get()) and app.float_vali(P_entry.get())):
+            E = float(E_entry.get())
+            P = float(P_entry.get())
+            result = E / P
+            energi_result_text.set(str(result) + " s")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel E = U * I * t
+    def energi_styrke_spaending_tid(self):
+        if (app.float_vali(U_entry.get()) and app.float_vali(t_entry.get())
+            and app.float_vali(I_entry.get())):
+            U = float(U_entry.get())
+            I = float(I_entry.get())
+            t = float(t_entry.get())
+            result = U * I * t
+            energi_result_text.set(str(result) + " J")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel I = E / (U * t)
+    def styrke_energi_spaending_tid(self):
+        if (app.float_vali(U_entry.get()) and app.float_vali(t_entry.get())
+            and app.float_vali(E_entry.get())):
+            U = float(U_entry.get())
+            E = float(E_entry.get())
+            t = float(t_entry.get())
+            result = E / (U * t)
+            energi_result_text.set(str(result) + " A")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel U = E / (I * t)
+    def spaending_energi_styrke_tid(self):
+        if (app.float_vali(I_entry.get()) and app.float_vali(t_entry.get())
+            and app.float_vali(E_entry.get())):
+            I = float(I_entry.get())
+            E = float(E_entry.get())
+            t = float(t_entry.get())
+            result = E / (I * t)
+            energi_result_text.set(str(result) + " V")
+        else:
+            energi_result_text.set("Dårligt input")
+            
+    #Beregner resultat ud fra formel t = E / (U * I)
+    def tid_spaending_energi_styrke(self):
+        if (app.float_vali(I_entry.get()) and app.float_vali(U_entry.get())
+            and app.float_vali(E_entry.get())):
+            I = float(I_entry.get())
+            E = float(E_entry.get())
+            U = float(U_entry.get())
+            result = E / (I * U)
+            energi_result_text.set(str(result) + " s")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel E = R * I^2 * t
+    def energi_modstand_styrke_tid(self):
+        if (app.float_vali(R_entry.get()) and app.float_vali(t_entry.get())
+            and app.float_vali(I_entry.get())):
+            R = float(R_entry.get())
+            I = float(I_entry.get())
+            t = float(t_entry.get())
+            result = R * I**2 * t
+            energi_result_text.set(str(result) + " J")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel I = sqrt(E / (R * t))
+    def styrke_modstand_energi_tid(self):
+        if (app.float_vali(R_entry.get()) and app.float_vali(t_entry.get())
+            and app.float_vali(E_entry.get())):
+            R = float(R_entry.get())
+            E = float(E_entry.get())
+            t = float(t_entry.get())
+            result = math.sqrt(E / (R * t))
+            energi_result_text.set(str(result) + " A")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel R = E / (I^2 * t)
+    def modstand_styrke_energi_tid(self):
+        if (app.float_vali(I_entry.get()) and app.float_vali(t_entry.get())
+            and app.float_vali(E_entry.get())):
+            I = float(I_entry.get())
+            E = float(E_entry.get())
+            t = float(t_entry.get())
+            result = E / (I**2 * t)
+            energi_result_text.set(str(result) + " Ohm")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel t = E / (I^2 * R)
+    def tid_modstand_styrke_energi(self):
+        if (app.float_vali(I_entry.get()) and app.float_vali(R_entry.get())
+            and app.float_vali(E_entry.get())):
+            I = float(I_entry.get())
+            E = float(E_entry.get())
+            R = float(R_entry.get())
+            result = E / (I**2 * R)
+            energi_result_text.set(str(result) + " s")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel Ekin = 0.5 * m * v^2
+    def kinenergi_masse_hastighed(self):
+        if (app.float_vali(m_entry.get()) and app.float_vali(v_entry.get())):
+            m = float(m_entry.get())
+            v = float(v_entry.get())
+            result = 0.5 * m * v**2
+            energi_result_text.set(str(result) + " J")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel v = sqrt(Ekin / (0.5 * m))
+    def hastighed_kinenergi_masse(self):
+        if (app.float_vali(m_entry.get()) and app.float_vali(Ekin_entry.get())):
+            m = float(m_entry.get())
+            Ekin = float(Ekin_entry.get())
+            result = math.sqrt(Ekin /  (0.5 * m))
+            energi_result_text.set(str(result) + " m/s")
+        else:
+            energi_result_text.set("Dårligt input")
+    #Beregner resultat ud fra formel m = Ekin / (0.5 * v^2)
+    def masse_hastighed_kinenergi(self):
+        if (app.float_vali(v_entry.get()) and app.float_vali(Ekin_entry.get())):
+            v = float(v_entry.get())
+            Ekin = float(Ekin_entry.get())
+            result = Ekin /  (0.5 * v**2)
+            energi_result_text.set(str(result) + " kg")
+        else:
+            energi_result_text.set("Dårligt input")
 
     #Opretter to multi choice skemaer, hvor man kan vælge hvad information
     #man har og man ønsker at finde. Opretter så knap, så beregningen
