@@ -17,7 +17,8 @@ først så tjekkes der om det er et ordentligt input, der er blevet givet.
 from Tkinter import *
 import math, re, operator
 
-#Opretter 
+#Objektet MainApp, som står for funktioner, der skal virke på tværs af vinduer
+#samt grundvinduet
 class MainApp():
     #Initialisere MainApp klassen, hvor den starter med at oprette en frame
     #her efter opretter den en knap, der kalder funktionen fysik
@@ -82,7 +83,10 @@ class MainApp():
         matchObj = re.findall(r'^-?[0-9]+\.?[0-9]?$', value)
         return matchObj
 
+#Opretter objektet inden for Skrivning. Har alle funktionerne og vinduerne
+#som bliver benyttet i forbindelse med beregninger indenfor skrivning
 class Skrivning():
+    #Initialiserer Skrivnings objektet med en besked og en knap. 
     def __init__(self, parent):
         self.top = Toplevel(parent)
         msg = Message(self.top, text = "Hvad vil du vide inden for skrivning")
@@ -92,8 +96,10 @@ class Skrivning():
                               height = 2)
         button_count.grid(row = 1)
 
+    #Opretter vindue, der bruges til at indtaste information og vise det i
+    #forbindelse med flest brugte ord og lixtal
     def most_used_words(self):
-        global sti_entry, most_words, word_graph
+        global sti_entry, most_words, word_graph, lixtal
         self.word_count = Toplevel(self.top)
         text_msg = """Indtast stien til den txt fil, du vil have tjekket, på følgende
 form c:/mappe/mappe/fil"""
@@ -108,28 +114,40 @@ form c:/mappe/mappe/fil"""
         count_words_button.grid(row = 2, column = 1)
         used_words_label = Label(self.word_count, text = "5 mest brugte ord og antal gange brugt")
         used_words_label.grid(row = 3)
+        lixtal_label = Label(self.word_count, text = "Lixtal: ")
+        lixtal_label.grid(row = 4)
         most_words = StringVar()
         most_words_text = Label(self.word_count, textvariable = most_words)
         most_words_text.grid(row = 3, column = 1)
+        lixtal = StringVar()
+        lixtal_text = Label(self.word_count, textvariable = lixtal)
+        lixtal_text.grid(row = 4, column = 1)
         word_graph = Canvas(self.word_count, width = 600, height = 400, bg="gray")
-        word_graph.grid(row = 4, columnspan = 2)
+        word_graph.grid(row = 5, columnspan = 2)
         word_graph.create_line((35, 25), (35, 375), fill = "black")
         word_graph.create_line((35,375), (585, 375), fill = "black")
 
+    #Beregner lixtal samt de mest brugte ord og laver en graf med det. Tester også
+    #om stien er i orden eller kommer der en fejl
     def count_words(self):
-        global most_words, word_graph
+        global most_words, word_graph, lixtal
         try:
             stien = sti_entry.get()
             count_file = open(stien, "r")
             count_text = count_file.read()
             count_text = count_text.lower()
             words = re.split(r'[ ^|^,|^.]+', count_text)
+            nwords = len(words) - 1
             wordcount = {}
+            long_words = 0
+            ndots = len(re.findall(r'\.', count_text))
             for w in words:
                 if not (w in wordcount.keys()):
                     wordcount[w] = 1
                 else:
                     wordcount[w] += 1
+                if len(w) > 6:
+                    long_words += 1
             sorted_wordcount = sorted(wordcount.items(), key = operator.itemgetter(1))
             sorted_wordcount.reverse()
             most_words.set(sorted_wordcount[0][0] + ": " +
@@ -165,11 +183,16 @@ form c:/mappe/mappe/fil"""
                                              sorted_wordcount[i][1]* pillar_num),
                                             fill = "red")
             count_file.close()
+            lix_result = (nwords / ndots) + ((100 * long_words) / nwords)
+            lixtal.set(str(lix_result))
             
         except:
             most_words.set("Kan ikke finde stien")            
-       
+
+#Matematik objektet, som indeholder alle de funktioner indenfor matematik som
+#som programmet bruger, hvis de ikke er i MainApp
 class Matematik():
+    #Initialiserer Matematik objektet med besked og en knap
     def __init__(self, parent):
         self.top = Toplevel(parent)
         msg = Message(self.top, text = "Hvad vil de beregne inden for matematik?")
@@ -177,8 +200,9 @@ class Matematik():
         button_parabel = Button(self.top, text = "Parabel", command =
                                 self.parabel_vindue, width = 20, height = 2)
         button_parabel.grid(row = 1)
-        matmenu = Menu(self.top)
 
+    #Opretter vindue til parabelberegning med input felter, beskeder og knap
+    #til at beregne med
     def parabel_vindue(self):
         global ap_entry, b_entry, c_entry, top_result, rod_result
         self.top_beregn = Toplevel(self.top)
@@ -210,7 +234,8 @@ class Matematik():
         roedder.grid(row = 5, column = 1)
         top_text.grid(row = 6)
         toppunkt.grid(row = 6, column = 1)
-          
+
+    #Laver beregningerne, som der skal bruges til parablen      
     def parabel_beregner(self):
         if (app.float_vali(ap_entry.get()) and app.float_vali(b_entry.get()) and
             app.float_vali(c_entry.get())):
@@ -232,6 +257,7 @@ class Matematik():
         else:
             top_result.set("Dårligt input")
 
+    #Beregner toppunktet
     def toppunkt_beregn(self, a, b, c):
         determinant = app.determinant(a, b, c)
         return ((-b) / (2 * a), ((-determinant) / (4 * a)))
@@ -252,6 +278,9 @@ class Fysik():
                                width = 20, height = 2)
         button_energi.grid(row = 2)
 
+    #Opretter vindue til energiberegninger, hvor der er beskeder og lister
+    #hvor der kan vælges hvilken information man søger og hvilke informationer
+    #som man har
     def energi(self):
         global error_message_energi, find_list_energi, har_list_energi
         self.top_energi = Toplevel(self.top)
@@ -286,6 +315,7 @@ class Fysik():
                                    textvariable = error_message_energi)
         error_energi_label.grid(row = 3)
 
+    
     def energi_beregningen(self):
         find_valgt = map(int, find_list_energi.curselection())[0]
         har_valgt = map(int, har_list_energi.curselection())
@@ -405,6 +435,53 @@ class Fysik():
             beregn_knap = Button(self.entry_top_energi, text = "Beregn",
                                  command = self.masse_hastighed_kinenergi)
             beregn_knap.grid(row = len(har_valgt) + 1)
+        #Check for beregning indenfor Epot = m * g * h
+        elif (3 == find_valgt and 7 in har_valgt and 9 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.masse_hoejde_potenergi)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        elif (7 == find_valgt and 3 in har_valgt and 9 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.hoejde_potenergi_masse)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        elif (9 == find_valgt and 3 in har_valgt and 7 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.potenergi_masse_hoejde)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        #Check for beregning indenfor Emek = Epot + Ekin
+        elif (8 == find_valgt and 9 in har_valgt and 10 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.kinenergi_potenergi_mekenergi)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        elif (9 == find_valgt and 8 in har_valgt and 10 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.potenergi_kinenergi_mekenergi)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        elif (10 == find_valgt and 9 in har_valgt and 8 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.mekenergi_kinenergi_potenergi)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        #Check for beregning indenfor Q = m * c * deltaT
+        elif (1 == find_valgt and 3 in har_valgt and 4 in har_valgt
+              and 5 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.varme_masse_specikapi_temp)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        elif (3 == find_valgt and 1 in har_valgt and 4 in har_valgt
+              and 5 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.masse_specikapi_temp_varme)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        elif (4 == find_valgt and 1 in har_valgt and 3 in har_valgt
+              and 5 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.specikapi_temp_varme_masse)
+            beregn_knap.grid(row = len(har_valgt) + 1)
+        elif (5 == find_valgt and 1 in har_valgt and 3 in har_valgt
+              and 4 in har_valgt):
+            beregn_knap = Button(self.entry_top_energi, text = "Beregn",
+                                 command = self.temp_varme_masse_specikapi)
+            beregn_knap.grid(row = len(har_valgt) + 1)
         else:
             error_message_energi.set("Ikke muligt at beregne")
             self.entry_top_energi.destroy()      
@@ -421,7 +498,8 @@ class Fysik():
                              18 in har_valgt, 19 in har_valgt, 20 in har_valgt)
         
         
-
+    #Opsætter input felter alt efter om parameterne er True eller False. Laver
+    #også resultatfelt
     def energi_entry_op(self, E, Q, A, m, c, deltaT, v, h, Ekin, Epot, Emek, F, k,
                         x, I, U, R, P, t, alpha, s):
         global E_entry, Q_entry, A_entry, m_entry, F_entry, energi_result_text
@@ -823,6 +901,114 @@ class Fysik():
             Ekin = float(Ekin_entry.get())
             result = Ekin /  (0.5 * v**2)
             energi_result_text.set(str(result) + " kg")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel m = Epot / (9.82 * h)
+    def masse_hoejde_potenergi(self):
+        if (app.float_vali(Epot_entry.get()) and app.float_vali(h_entry.get())):
+            Epot = float(Epot_entry.get())
+            h = float(h_entry.get())
+            result = Epot / (9.82 * h)
+            energi_result_text.set(str(result) + " kg")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel h = Epot / (9.82 * m)
+    def hoejde_potenergi_masse(self):
+        if (app.float_vali(Epot_entry.get()) and app.float_vali(m_entry.get())):
+            Epot = float(Epot_entry.get())
+            m = float(m_entry.get())
+            result = Epot / (9.82 * m)
+            energi_result_text.set(str(result) + " m")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel Epot = 9.82 * h * m
+    def potenergi_masse_hoejde(self):
+        if (app.float_vali(h_entry.get()) and app.float_vali(m_entry.get())):
+            h = float(h_entry.get())
+            m = float(m_entry.get())
+            result = 9.82 * m * h
+            energi_result_text.set(str(result) + " J")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel Ekin = Emek - Epot
+    def kinenergi_potenergi_mekenergi(self):
+        if (app.float_vali(Emek_entry.get()) and app.float_vali(Epot_entry.get())):
+            Emek = float(Emek_entry.get())
+            Epot = float(Epot_entry.get())
+            result = Emek - Epot
+            energi_result_text.set(str(result) + " J")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel Epot = Emek - Ekin
+    def potenergi_kinenergi_mekenergi(self):
+        if (app.float_vali(Emek_entry.get()) and app.float_vali(Ekin_entry.get())):
+            Emek = float(Emek_entry.get())
+            Ekin = float(Ekin_entry.get())
+            result = Emek - Ekin
+            energi_result_text.set(str(result) + " J")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel Emek = Epot + Ekin
+    def mekenergi_kinenergi_potenergi(self):
+        if (app.float_vali(Epot_entry.get()) and app.float_vali(Ekin_entry.get())):
+            Epot = float(Epot_entry.get())
+            Ekin = float(Ekin_entry.get())
+            result = Epot + Ekin
+            energi_result_text.set(str(result) + " J")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel Q = m * c * deltaT
+    def varme_masse_specikapi_temp(self):
+        if (app.float_vali(m_entry.get()) and app.float_vali(c_entry.get())
+            and app.float_vali(deltaT_entry.get())):
+            deltaT = float(deltaT_entry.get())
+            m = float(m_entry.get())
+            c = float(c_entry.get())
+            result = m * c * deltaT
+            energi_result_text.set(str(result) + " J")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel m = Q / (c * deltaT)
+    def masse_specikapi_temp_varme(self):
+        if (app.float_vali(Q_entry.get()) and app.float_vali(c_entry.get())
+            and app.float_vali(deltaT_entry.get())):
+            deltaT = float(deltaT_entry.get())
+            Q = float(Q_entry.get())
+            c = float(c_entry.get())
+            result = Q / (c * deltaT)
+            energi_result_text.set(str(result) + " kg")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel c = Q / (m * deltaT)
+    def specikapi_temp_varme_masse(self):
+        if (app.float_vali(Q_entry.get()) and app.float_vali(m_entry.get())
+            and app.float_vali(deltaT_entry.get())):
+            deltaT = float(deltaT_entry.get())
+            Q = float(Q_entry.get())
+            m = float(m_entry.get())
+            result = Q / (m * deltaT)
+            energi_result_text.set(str(result) + " J / (kg * K)")
+        else:
+            energi_result_text.set("Dårligt input")
+
+    #Beregner resultat ud fra formel deltaT = Q / (m * c)
+    def temp_varme_masse_specikapi(self):
+        if (app.float_vali(Q_entry.get()) and app.float_vali(m_entry.get())
+            and app.float_vali(c_entry.get())):
+            c = float(c_entry.get())
+            Q = float(Q_entry.get())
+            m = float(m_entry.get())
+            result = Q / (m * c)
+            energi_result_text.set(str(result) + " K")
         else:
             energi_result_text.set("Dårligt input")
 
