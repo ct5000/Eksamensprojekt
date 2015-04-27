@@ -38,10 +38,6 @@ class MainApp():
                                        command = self.skrivning, width = 20,
                                        height = 2)
         self.button_skrivning.grid(row = 3)
-        
-        menubar = Menu(self.frame)
-        menubar.add_command(label = "Quit", command = parent.destroy)
-        parent.config(menu = menubar)
 
     #Opretter et nyt vindue via Fysik klassen
     def fysik(self):
@@ -307,7 +303,7 @@ class Fysik():
         for item in muligheder_energi:
             find_list_energi.insert(END, item)
             har_list_energi.insert(END, item)
-        beregn_energi_button = Button(self.top_energi, text = "Beregn",
+        beregn_energi_button = Button(self.top_energi, text = "Jeg har valgt",
                                       command = self.energi_beregningen)
         beregn_energi_button.grid(row = 2, column = 1, sticky = E)
         error_message_energi = StringVar()
@@ -1027,13 +1023,13 @@ class Fysik():
         har_list = Listbox(self.top_beregn, selectmode = MULTIPLE,
                            exportselection = 0)
         har_list.grid(row = 1, column = 1)
-        muligheder = ["Starhastighed: v0 [m/s]", "Strækning: s [m]", "Tid: t [s]",
+        muligheder = ("Starhastighed: v0 [m/s]", "Strækning: s [m]", "Tid: t [s]",
                       "Accelration: a [m/s^2]", 'Startrækning: s0 [m]',
-                      'Hastighed: v [m/s]']
+                      'Hastighed: v [m/s]')
         for item in muligheder:
             find_list.insert(END, item)
             har_list.insert(END, item)    
-        kin_beregning_knap = Button(self.top_beregn, text = "Test",
+        kin_beregning_knap = Button(self.top_beregn, text = "Jeg har valgt",
                                     command = self.kin_beregning)
         kin_beregning_knap.grid(row = 2)
         error_message = StringVar()
